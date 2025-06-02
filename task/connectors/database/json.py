@@ -1,20 +1,27 @@
 import json
+import logging
 
 from task.utils.config import JSON_DATABASE_NAME
 from task.connectors.database.database_connector import DatabaseConnector
 from task.currency_converter import ConvertedPricePLN
 
 
+logger = logging.getLogger(__name__)
+
+
 class JsonFileDatabaseConnector(DatabaseConnector):
-    def __init__(self) -> None:
-        self._data = self._read_data()
+    def __init__(self, db_path: str = JSON_DATABASE_NAME) -> None:
+        logger.debug("Initializing JsonDatabaseConnector...")
+        self._db_path = db_path
+        self._data = self._read_data(db_path)
 
     @staticmethod
-    def _read_data() -> dict:
-        with open(JSON_DATABASE_NAME, "r") as file:
+    def _read_data(db_path: str = JSON_DATABASE_NAME) -> dict:
+        with open(db_path, "r") as file:
             return json.load(file)
 
     def save(self, entity: ConvertedPricePLN) -> int:
+        logger.debug(f"Saving data to {self._db_path}...")
         item_id = max(map(int, self._data.keys())) + 1
 
         self._data[item_id] = {
@@ -24,7 +31,7 @@ class JsonFileDatabaseConnector(DatabaseConnector):
             "price_in_pln": entity.price_in_pln,
             "date": entity.currency_rate_fetch_date
         }
-        with open(JSON_DATABASE_NAME, "w") as file:
+        with open(self._db_path, "w") as file:
             json.dump(self._data, file, indent = "\t")
 
         return item_id

@@ -4,7 +4,7 @@ from task.currency_converter import ConvertedPricePLN
 
 class DatabaseConnector(ABC):
     @abstractmethod
-    def __init__(self):
+    def __init__(self, db_path: str):
         pass
 
     @abstractmethod

@@ -21,8 +21,10 @@ class ConvertedPricePLN:
     price_in_pln: float
 
     def __str__(self):
-        return (f"{self.price_in_source_currency} {self.currency} = {self.price_in_pln} PLN "
-                f"| rate: {self.currency_rate} | date: {self.currency_rate_fetch_date}")
+        result = (f"{self.price_in_source_currency} {self.currency} = {self.price_in_pln} PLN "
+                  f"| rate: {self.currency_rate} | date: {self.currency_rate_fetch_date}")
+        logger.debug(f"Initializing ConvertedPricePLN as: {result}")
+        return result
 
 
 class Mode(Enum):
@@ -37,15 +39,15 @@ class Source(Enum):
 
 class PriceCurrencyConverterToPLN:
     def __init__(self, source: Source):
+        logger.info("Initializing PriceCurrencyConverterToPLN...")
         from task.utils.dicts import SOURCE_CONNECTORS
         if source not in SOURCE_CONNECTORS:
             raise NotImplementedError(f"Source {source} is not implemented yet")
         self._source_connector: SourceConnector = SOURCE_CONNECTORS[source]()
 
     def convert_to_pln(self, *, currency: str, price: float) -> ConvertedPricePLN:
+        logger.info(f"Converting {price} {currency} to PLN...")
         try:
-            logger.debug(f"Converting {price} {currency} to PLN...")
-
             if currency == "PLN":
                 date = str(datetime.now().date())
                 rate = 1.00
@@ -56,4 +58,5 @@ class PriceCurrencyConverterToPLN:
 
             return converted_price
         except Exception as e:
+            logger.error(f"Error occurred: {e}")
             raise ConversionError(e)

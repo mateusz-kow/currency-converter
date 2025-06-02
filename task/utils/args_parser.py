@@ -19,10 +19,14 @@ def currency(s: str):
 class MyParser(argparse.ArgumentParser):
     def __init__(self):
         super().__init__(description="Convert prices to PLN")
-        self.add_argument("--mode", default="dev", choices=("dev", "prod"))
-        self.add_argument("--currency", required=True, type=currency)
-        self.add_argument("--source", required=True, choices=("api", "db"))
-        self.add_argument("--amount", required=True, type=int)
+        self.add_argument("--mode", default="dev", choices=("dev", "prod"),
+                          help="dev - json database, prod - sqlite3 database")
+        self.add_argument("--currency", required=True, type=currency,
+                          help="currency of origin")
+        self.add_argument("--source", required=True, choices=("api", "db"),
+                          help="source of currency rate")
+        self.add_argument("--amount", required=True, type=int,
+                          help="amount of money in the given currency")
 
     def error(self, message):
         raise ParsingError(message)
