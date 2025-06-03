@@ -1,7 +1,8 @@
 import logging
 
-from task.currency_converter import Mode, ConvertedPricePLN
+from task.currency_converter import ConvertedPricePLN
 from task.connectors.database.database_connector import DatabaseConnector
+from task.utils.enums import Mode
 
 logger = logging.getLogger(__name__)
 
@@ -12,12 +13,14 @@ class DatabaseError(Exception):
 
 class DatabaseUpdater:
     def __init__(self, mode: Mode, db_path: str = None):
+        from task.utils.constants import get_database_connector
+
         logger.debug("Initializing DatabaseUpdater...")
-        from task.utils.dicts import DATABASE_CONNECTORS
-        if mode not in DATABASE_CONNECTORS:
-            logger.error(f"Mode {mode} isn't implemented yet")
-            raise NotImplementedError(f"Mode {mode} isn't implemented yet")
-        self._connector: DatabaseConnector = DATABASE_CONNECTORS[mode](db_path)
+        connector_cls = get_database_connector(mode)
+        if db_path:
+            self._connector: DatabaseConnector = connector_cls(db_path)
+        else:
+            self._connector: DatabaseConnector = connector_cls()
 
     def update_database(self, converted_price: ConvertedPricePLN):
         try:

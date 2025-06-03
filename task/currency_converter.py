@@ -1,15 +1,11 @@
-from dataclasses import dataclass
 import logging
-from datetime import datetime
-from enum import Enum
+from dataclasses import dataclass
+from datetime import date, datetime
 
 from task.connectors.source.source_connector import SourceConnector
+from task.utils.enums import Source
 
 logger = logging.getLogger(__name__)
-
-
-class ConversionError(Exception):
-    pass
 
 
 @dataclass(frozen=True)
@@ -17,46 +13,37 @@ class ConvertedPricePLN:
     price_in_source_currency: float
     currency: str
     currency_rate: float
-    currency_rate_fetch_date: str
+    currency_rate_fetch_date: date
     price_in_pln: float
 
     def __str__(self):
-        result = (f"{self.price_in_source_currency} {self.currency} = {self.price_in_pln} PLN "
-                  f"| rate: {self.currency_rate} | date: {self.currency_rate_fetch_date}")
-        logger.debug(f"Initializing ConvertedPricePLN as: {result}")
-        return result
+        return (f"{self.price_in_source_currency} {self.currency} = {self.price_in_pln} PLN "
+                f"| rate: {self.currency_rate} | date: {self.currency_rate_fetch_date}")
 
 
-class Mode(Enum):
-    DEV = 1
-    PROD = 2
-
-
-class Source(Enum):
-    API = 1
-    DATABASE = 2
+class ConversionError(Exception):
+    pass
 
 
 class PriceCurrencyConverterToPLN:
     def __init__(self, source: Source):
+        from task.utils.constants import get_source_connector
+
         logger.info("Initializing PriceCurrencyConverterToPLN...")
-        from task.utils.dicts import SOURCE_CONNECTORS
-        if source not in SOURCE_CONNECTORS:
-            raise NotImplementedError(f"Source {source} is not implemented yet")
-        self._source_connector: SourceConnector = SOURCE_CONNECTORS[source]()
+        self._source_connector: SourceConnector = get_source_connector(source)()
 
     def convert_to_pln(self, *, currency: str, price: float) -> ConvertedPricePLN:
         logger.info(f"Converting {price} {currency} to PLN...")
         try:
             if currency == "PLN":
-                date = str(datetime.now().date())
+                result_date = str(datetime.now().date())
                 rate = 1.00
             else:
-                date, rate = self._source_connector.get_date_and_rate(currency=currency)
+                result_date, rate = self._source_connector.get_date_and_rate(currency=currency)
 
-            converted_price = ConvertedPricePLN(price, currency, rate, date, round(price * rate, 2))
+            converted_price = ConvertedPricePLN(price, currency, rate, result_date, round(price * rate, 2))
+            logger.debug(f"Initialized ConvertedPricePLN as: {str(converted_price)}")
 
             return converted_price
         except Exception as e:
-            logger.error(f"Error occurred: {e}")
-            raise ConversionError(e)
+            raise ConversionError(f"Failed to convert {price} {currency} to PLN: {e}")

@@ -1,12 +1,12 @@
-import task.utils.setup_logging
 import unittest
-import tests.test_currency_converter
-import tests.test_database_updater
+import tests.test_sql_database_connector
+import tests.test_json_database_connector
 
 loader = unittest.TestLoader()
 suite = unittest.TestSuite()
 
-suite.addTest(loader.loadTestsFromModule(tests.test_currency_converter))
-suite.addTest(loader.loadTestsFromModule(tests.test_database_updater))
+suite.addTests((loader.loadTestsFromModule(tests.test_json_database_connector),
+               loader.loadTestsFromModule(tests.test_sql_database_connector)))
+
 
 unittest.TextTestRunner().run(suite)

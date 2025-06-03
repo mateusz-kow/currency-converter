@@ -1,8 +1,15 @@
 import json
 import logging
+import os.path
+from datetime import date, datetime
 
-from task.utils.config import CURRENCY_RATES_FILE
 from task.connectors.source.source_connector import SourceConnector
+from task.utils.config import CURRENCY_RATES_FILE
+
+
+class InvalidCurrencyDataError(Exception):
+    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -10,21 +17,44 @@ logger = logging.getLogger(__name__)
 class FileConnector(SourceConnector):
     def __init__(self, file: str = CURRENCY_RATES_FILE):
         logger.info("Initializing FileConnector...")
+        if not os.path.exists(file):
+            raise ValueError(f"Path doesn't exist: {file}")
+
+        _, ext = os.path.splitext(file)
+        if ext != ".json":
+            raise ValueError(f"Invalid file format: {os.path.basename(file)}. Expected a .json file, got {ext}")
         super().__init__()
         self._file = file
+        self._filename = os.path.basename(file)
 
-    def get_date_and_rate(self, currency: str) -> (str, float):
+    def get_date_and_rate(self, currency: str) -> tuple[date, float]:
         logger.debug(f"Loading data and rate on currency {currency}")
         try:
+
             with open(self._file, 'r') as file:
                 info = json.load(file)
 
             if currency in info:
                 rates_list = info[currency]
+                if not rates_list:
+                    raise InvalidCurrencyDataError(f"No rates found for currency {currency} in {self._filename}")
+
                 chosen_rate = rates_list[0]
-                return chosen_rate["date"], chosen_rate["rate"]
+                date_str = chosen_rate["date"]
+                formatted_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                return formatted_date, chosen_rate["rate"]
 
             else:
-                raise ValueError(f"Currency {currency} not present in the {CURRENCY_RATES_FILE} file")
-        except:
+                raise InvalidCurrencyDataError(f"Currency {currency} not present in the {self._filename} file")
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            logger.error(f"Data error while reading '{self._file}': {e}")
+            raise ValueError(f"Incorrect JSON file structure ({self._filename})") from e
+        except InvalidCurrencyDataError as e:
+            logger.error(f"Couldn't convert currency from file '{self._file}': {e}")
+            raise
+        except OSError as e:
+            logger.error(f"Couldn't open file '{self._file}': {e}")
+            raise OSError(f"Couldn't open file '{self._filename}'") from e
+        except Exception as e:
+            logger.error(f"Unexpected error reading '{self._file}': {e}")
             raise

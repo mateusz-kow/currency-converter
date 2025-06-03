@@ -2,7 +2,6 @@ import sys
 import logging
 import traceback
 
-from task.utils import setup_logging
 from task.currency_converter import PriceCurrencyConverterToPLN, ConversionError
 from task.utils.args_parser import MyParser, ParsingError
 from task.database_updater import DatabaseUpdater, DatabaseError
@@ -10,18 +9,21 @@ from task.database_updater import DatabaseUpdater, DatabaseError
 logger = logging.getLogger(__name__)
 
 
-def _handle_unexpected_error(error: Exception):
-    logger.error(error)
-    logger.error(traceback.format_exc())
-    sys.stderr.write(f"Unexpected error occured: {error}")
+def _handle_unexpected_error(error: Exception, code: int = 1):
+    logger.exception(error)
+    sys.stderr.write(str(error))
+    sys.exit(code)
 
+
+mode = None
+converted_price = None
 
 try:
     logger.info("Parsing arguments...")
     parser = MyParser()
     currency, price, mode, source = parser.get_args()
 
-    logger.info("Converting price...")
+    logger.info(f"Starting conversion: {price} {currency} from {source}")
     converter = PriceCurrencyConverterToPLN(source)
     converted_price = converter.convert_to_pln(currency=currency, price=price)
 
@@ -32,29 +34,22 @@ except ParsingError as e:
     sys.stderr.write(f"{str(e)}\n")
     sys.exit(2)
 except ConversionError as e:
-    logger.error(e)
-    logger.error(traceback.format_exc())
-    sys.stderr.write("Failed to convert the price\n")
+    _handle_unexpected_error(e, 3)
 except Exception as e:
     _handle_unexpected_error(e)
 
-try:
-    logger.info("Updating database...")
-    database_updater = DatabaseUpdater(mode)
-    database_updater.update_database(converted_price)
+if mode is not None and converted_price is not None:
+    try:
+        logger.info("Updating database...")
+        database_updater = DatabaseUpdater(mode)
+        database_updater.update_database(converted_price)
 
-    sys.stdout.write("Database updated successfully\n")
-    logger.info("Database updated successfully")
+        sys.stdout.write("Database updated successfully\n")
+        logger.info("Database updated successfully")
 
-except NameError as e:
-    logger.error(e)
-    logger.error(traceback.format_exc())
-    sys.stderr.write("Failed to update database\n")
-except DatabaseError as e:
-    logger.error(e)
-    logger.error(traceback.format_exc())
-    sys.stderr.write("Failed to update database\n")
-except Exception as e:
-    logger.error(e)
-    logger.error(traceback.format_exc())
-    sys.stderr.write("Failed to update database\n")
+    except DatabaseError as e:
+        sys.stderr.write("Failed to update database\n")
+        _handle_unexpected_error(e, 4)
+    except Exception as e:
+        sys.stderr.write("Failed to update database\n")
+        _handle_unexpected_error(e)
