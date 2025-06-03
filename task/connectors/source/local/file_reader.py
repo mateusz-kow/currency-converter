@@ -30,7 +30,6 @@ class FileConnector(SourceConnector):
     def get_date_and_rate(self, currency: str) -> tuple[date, float]:
         logger.debug(f"Loading data and rate on currency {currency}")
         try:
-
             with open(self._file, 'r') as file:
                 info = json.load(file)
 
@@ -42,7 +41,9 @@ class FileConnector(SourceConnector):
                 chosen_rate = rates_list[0]
                 date_str = chosen_rate["date"]
                 formatted_date = datetime.strptime(date_str, "%Y-%m-%d").date()
-                return formatted_date, chosen_rate["rate"]
+                rate = chosen_rate["rate"]
+                logger.debug(f"Date: {formatted_date}, rate: {rate}")
+                return formatted_date, rate
 
             else:
                 raise InvalidCurrencyDataError(f"Currency {currency} not present in the {self._filename} file")

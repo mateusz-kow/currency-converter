@@ -20,13 +20,17 @@ class JsonFileDatabaseConnector(DatabaseConnector):
     @staticmethod
     def _read_data(db_path: str = JSON_DATABASE_NAME) -> dict:
         with open(db_path, "r") as file:
-            return json.load(file)
+            content = file.read().strip()
+            if not content:
+                return {}
+            return json.loads(content)
 
     def save(self, entity: ConvertedPricePLN) -> int:
         logger.debug(f"Saving data to {self._db_path}...")
         item_id = max(map(int, self._data.keys()), default=0) + 1
+        key = str(item_id)
 
-        self._data[item_id] = {
+        self._data[key] = {
             "id": item_id,
             "currency": entity.currency,
             "rate": entity.currency_rate,
@@ -40,7 +44,7 @@ class JsonFileDatabaseConnector(DatabaseConnector):
 
     def get_all(self) -> list[ConvertedPricePLN]:
         results = []
-        for k in self._data:
+        for k in self._data.keys():
             try:
                 results.append(self.get_by_id(int(k)))
             except Exception as e:
@@ -48,18 +52,21 @@ class JsonFileDatabaseConnector(DatabaseConnector):
         return results
 
     def get_by_id(self, item_id: int) -> ConvertedPricePLN:
-        if item_id not in self._data.keys():
-            raise KeyError(f"Item with id {item_id} not found.")
+        key = str(item_id)
+        if key not in self._data:
+            raise KeyError(f"Item with id {item_id} not found. {self._data}")
 
-        item = self._data[item_id]
+        item = self._data[key]
         currency = item["currency"]
         currency_rate = item["rate"]
         currency_rate_fetch_date = item["date"]
         price_in_pln = item["price_in_pln"]
         price_in_source_currency = price_in_pln / currency_rate if currency_rate != 0 else 0
 
-        return ConvertedPricePLN(currency=currency,
-                                 currency_rate=currency_rate,
-                                 currency_rate_fetch_date=currency_rate_fetch_date,
-                                 price_in_pln=price_in_pln,
-                                 price_in_source_currency=price_in_source_currency)
+        return ConvertedPricePLN(
+            currency=currency,
+            currency_rate=currency_rate,
+            currency_rate_fetch_date=currency_rate_fetch_date,
+            price_in_pln=price_in_pln,
+            price_in_source_currency=price_in_source_currency
+        )

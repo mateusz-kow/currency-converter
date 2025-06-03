@@ -15,11 +15,11 @@ class ApiConnector(SourceConnector):
             request = requests.get(f"https://api.nbp.pl/api/exchangerates/rates/a/{currency}/?format=json")
             status_code = request.status_code
             if status_code == 404:
-                logger.error(f"{status_code} Currency not found")
-                raise ValueError(f"{status_code} Currency not found")
+                logger.error(f"{status_code} Currency {currency} not found")
+                raise ValueError(f"{status_code} Currency {currency} not found")
             if status_code != 200:
                 logger.error(f"Request failed with code {status_code}")
-                raise ValueError(f"{status_code} Failed to get current rate")
+                raise ValueError(f"{status_code} Failed to get current rate for currency {currency}")
             logger.debug(f"Request completed successfully with code {status_code}")
 
             result: dict = request.json()

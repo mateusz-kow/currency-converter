@@ -2,6 +2,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
+from task.connectors.database.json import JsonFileDatabaseConnector
 from task.connectors.database.sql import SQLDatabaseConnector
 from task.currency_converter import ConvertedPricePLN
 from tests import TEST_PATH
@@ -9,43 +10,50 @@ import random
 import gc
 from filelock import FileLock
 
-TEST_DB_PATH = os.path.join(TEST_PATH, "test_database.db")
-LOCK_PATH = TEST_PATH + ".lock"
 
+class TestJsonFileDatabaseConnector(unittest.TestCase):
+    TEST_CLASS = JsonFileDatabaseConnector
+    TEST_DB_PATH = os.path.join(TEST_PATH, "test_database.json")
+    LOCK_PATH = TEST_PATH + ".lock"
 
-class TestSQLDatabaseConnector(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         os.makedirs(TEST_PATH, exist_ok=True)
-        cls._lock = FileLock(LOCK_PATH)
+        cls._lock = FileLock(cls.LOCK_PATH)
 
     @classmethod
     def tearDownClass(cls):
         with cls._lock:
-            os.rmdir(TEST_PATH)
+            try:
+                os.rmdir(TEST_PATH)
+            except:
+                pass
 
     def setUp(self):
         self._connector = None
         gc.collect()
         with self._lock:
-            if os.path.exists(TEST_DB_PATH):
-                os.remove(TEST_DB_PATH)
-            self._connector = SQLDatabaseConnector(TEST_DB_PATH)
+            if os.path.exists(self.TEST_DB_PATH):
+                os.remove(self.TEST_DB_PATH)
+
+            with open(self.TEST_DB_PATH, "x"):
+                pass
+
+            self._connector = self.TEST_CLASS(self.TEST_DB_PATH)
 
     def tearDown(self):
         self._connector = None
         gc.collect()
         with self._lock:
-            if os.path.exists(TEST_DB_PATH):
-                os.remove(TEST_DB_PATH)
+            if os.path.exists(self.TEST_DB_PATH):
+                os.remove(self.TEST_DB_PATH)
 
     @staticmethod
     def _create_entity() -> ConvertedPricePLN:
         currency = random.choice(["USD", "EUR", "PLN", "CHF", "CZK"])
         currency_rate = round(random.uniform(0.5, 6.0), 4)
-        price_in_source_currency = round(random.uniform(10, 1000), 2)
+        price_in_source_currency = round(random.uniform(1, 1000), 2)
         price_in_pln = round(currency_rate * price_in_source_currency, 2)
-
         days_ago = random.randint(0, 365)
         fetch_date = (datetime.now() - timedelta(days=days_ago)).date()
 
@@ -80,12 +88,35 @@ class TestSQLDatabaseConnector(unittest.TestCase):
             self.assertEqual(retrieved.currency_rate, original.currency_rate)
             self.assertEqual(retrieved.price_in_pln, original.price_in_pln)
 
-    def test_get_by_id_not_found(self):
-        with self.assertLogs("task.connectors.database.sql", level="ERROR") as log:
-            with self.assertRaises(TypeError):  # Because row is None, and we try to unpack it
-                self._connector.get_by_id(9999)
+    def test_get_by_id_nonexistent(self):
+        with self.assertRaises(KeyError):
+            self._connector.get_by_id("nonexistent-id")
 
-            self.assertIn("No record with id 9999 found", "".join(log.output))
+    def test_save_multiple_unique_ids(self):
+        ids = set()
+        for _ in range(10):
+            entity = self._create_entity()
+            item_id = self._connector.save(entity)
+            self.assertNotIn(item_id, ids)
+            ids.add(item_id)
+        self.assertEqual(len(ids), 10)
+
+    def test_persistence_between_instances(self):
+        entity = self._create_entity()
+        item_id = self._connector.save(entity)
+        entity = self._connector.get_by_id(item_id)
+
+        del self._connector
+        gc.collect()
+        connector = self.TEST_CLASS(self.TEST_DB_PATH)
+
+        retrieved = connector.get_by_id(item_id)
+        self.assertEqual(str(retrieved), str(entity))
+
+
+class TestSQLDatabaseConnector(TestJsonFileDatabaseConnector):
+    TEST_CLASS = SQLDatabaseConnector
+    TEST_DB_PATH = os.path.join(TEST_PATH, "test_database.db")
 
 
 if __name__ == "__main__":
