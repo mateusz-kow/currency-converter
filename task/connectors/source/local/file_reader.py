@@ -14,7 +14,7 @@ class InvalidCurrencyDataError(Exception):
 logger = logging.getLogger(__name__)
 
 
-class FileConnector(SourceConnector):
+class FileReader(SourceConnector):
     def __init__(self, file: str = CURRENCY_RATES_FILE):
         logger.info("Initializing FileConnector...")
         if not os.path.exists(file):
@@ -31,14 +31,14 @@ class FileConnector(SourceConnector):
         logger.debug(f"Loading data and rate on currency {currency}")
         try:
             with open(self._file, 'r') as file:
-                info = json.load(file)
+                content = json.load(file)
 
-            if currency in info:
-                rates_list = info[currency]
+            if currency in content:
+                rates_list: list = content[currency]
                 if not rates_list:
                     raise InvalidCurrencyDataError(f"No rates found for currency {currency} in {self._filename}")
 
-                chosen_rate = rates_list[0]
+                chosen_rate = max(rates_list, key=lambda r: datetime.strptime(r["date"], "%Y-%m-%d").date())
                 date_str = chosen_rate["date"]
                 formatted_date = datetime.strptime(date_str, "%Y-%m-%d").date()
                 rate = chosen_rate["rate"]

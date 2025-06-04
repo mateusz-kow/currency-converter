@@ -3,7 +3,7 @@ from datetime import date
 
 from task.connectors.source.source_connector import SourceConnector
 from task.connectors.source.remote.api_connector import ApiConnector
-from task.connectors.source.local.file_reader import FileConnector
+from task.connectors.source.local.file_reader import FileReader
 
 
 class TestApiConnector(unittest.TestCase):
@@ -52,7 +52,7 @@ class TestApiConnector(unittest.TestCase):
 
 
 class TestFileConnector(TestApiConnector):
-    TEST_CLASS = FileConnector
+    TEST_CLASS = FileReader
 
 
 if __name__ == "__main__":

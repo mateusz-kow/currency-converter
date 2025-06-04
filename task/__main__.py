@@ -1,6 +1,5 @@
 import sys
 import logging
-import traceback
 
 from task.currency_converter import PriceCurrencyConverterToPLN, ConversionError
 from task.utils.args_parser import MyParser, ParsingError
@@ -9,9 +8,9 @@ from task.database_updater import DatabaseUpdater, DatabaseError
 logger = logging.getLogger(__name__)
 
 
-def _handle_unexpected_error(error: Exception, code: int = 1):
+def _handle_unexpected_error(error: Exception, code: int = 1) -> None:
     logger.exception(error)
-    sys.stderr.write(str(error))
+    sys.stderr.write(f"{str(error)}\n")
     sys.exit(code)
 
 
@@ -31,8 +30,7 @@ try:
     logger.info(f"Converted price: {str(converted_price)}")
 
 except ParsingError as e:
-    sys.stderr.write(f"{str(e)}\n")
-    sys.exit(2)
+    _handle_unexpected_error(e, 2)
 except ConversionError as e:
     _handle_unexpected_error(e, 3)
 except Exception as e:

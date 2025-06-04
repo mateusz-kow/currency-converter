@@ -474,5 +474,40 @@
         "rate": 1.0,
         "price_in_pln": 100.0,
         "date": "2025-06-03"
+    },
+    "70": {
+        "id": 70,
+        "currency": "PLN",
+        "rate": 1.0,
+        "price_in_pln": 100.0,
+        "date": "2025-06-04"
+    },
+    "71": {
+        "id": 71,
+        "currency": "USD",
+        "rate": 3.7525,
+        "price_in_pln": 375.25,
+        "date": "2025-06-04"
+    },
+    "72": {
+        "id": 72,
+        "currency": "CZK",
+        "rate": 0.1722,
+        "price_in_pln": -2.316714265335135e+17,
+        "date": "2025-06-04"
+    },
+    "73": {
+        "id": 73,
+        "currency": "JPY",
+        "rate": 0.026079,
+        "price_in_pln": -3507.63,
+        "date": "2025-06-04"
+    },
+    "74": {
+        "id": 74,
+        "currency": "CHF",
+        "rate": 4.564,
+        "price_in_pln": -613858.0,
+        "date": "2025-06-04"
     }
 }

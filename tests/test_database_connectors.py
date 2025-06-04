@@ -1,3 +1,4 @@
+import json
 import os
 import unittest
 from datetime import datetime, timedelta
@@ -20,31 +21,30 @@ class TestJsonFileDatabaseConnector(unittest.TestCase):
     def setUpClass(cls):
         os.makedirs(TEST_PATH, exist_ok=True)
         cls._lock = FileLock(cls.LOCK_PATH)
+        cls._connector = None
 
     @classmethod
     def tearDownClass(cls):
         with cls._lock:
-            try:
-                os.rmdir(TEST_PATH)
-            except:
-                pass
+            if os.path.exists(cls.TEST_DB_PATH):
+                os.remove(cls.TEST_DB_PATH)
+            os.rmdir(TEST_PATH)
 
     def setUp(self):
-        self._connector = None
-        gc.collect()
+        self.tearDown()
         with self._lock:
-            if os.path.exists(self.TEST_DB_PATH):
-                os.remove(self.TEST_DB_PATH)
-
-            with open(self.TEST_DB_PATH, "x"):
-                pass
-
+            with open(self.TEST_DB_PATH, "w") as file:
+                if self.TEST_CLASS == JsonFileDatabaseConnector:
+                    json.dump({}, file)
             self._connector = self.TEST_CLASS(self.TEST_DB_PATH)
 
     def tearDown(self):
-        self._connector = None
-        gc.collect()
         with self._lock:
+            if self._connector and hasattr(self._connector, "close"):
+                self._connector.close()
+            self._connector = None
+            gc.collect()
+
             if os.path.exists(self.TEST_DB_PATH):
                 os.remove(self.TEST_DB_PATH)
 
@@ -106,11 +106,12 @@ class TestJsonFileDatabaseConnector(unittest.TestCase):
         item_id = self._connector.save(entity)
         entity = self._connector.get_by_id(item_id)
 
-        del self._connector
-        gc.collect()
         connector = self.TEST_CLASS(self.TEST_DB_PATH)
-
         retrieved = connector.get_by_id(item_id)
+
+        if hasattr(connector, "close"):
+            connector.close()
+
         self.assertEqual(str(retrieved), str(entity))
 
 

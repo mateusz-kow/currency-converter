@@ -20,10 +20,7 @@ class JsonFileDatabaseConnector(DatabaseConnector):
     @staticmethod
     def _read_data(db_path: str = JSON_DATABASE_NAME) -> dict:
         with open(db_path, "r") as file:
-            content = file.read().strip()
-            if not content:
-                return {}
-            return json.loads(content)
+            return json.load(file)
 
     def save(self, entity: ConvertedPricePLN) -> int:
         logger.debug(f"Saving data to {self._db_path}...")

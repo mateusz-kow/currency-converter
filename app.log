@@ -1,3 +1,203 @@
-2025-06-03 21:56:12,378 - DEBUG - proactor_events.py - Using proactor: IocpProactor
-2025-06-03 21:56:12,919 - DEBUG - connectionpool.py - Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
-2025-06-03 21:56:13,474 - DEBUG - connectionpool.py - https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/1.1" 200 1681126
+2025-06-04 15:48:52,000 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:48:52,011 - DEBUG - args_parser.py - Given currency is EUR
+2025-06-04 15:48:52,012 - DEBUG - args_parser.py - Given price is 100.0
+2025-06-04 15:48:52,012 - DEBUG - args_parser.py - Running in prod mode
+2025-06-04 15:48:52,012 - DEBUG - args_parser.py - Data source is db
+2025-06-04 15:48:52,012 - INFO - __main__.py - Starting conversion: 100.0 EUR from Source.DATABASE
+2025-06-04 15:48:52,756 - INFO - currency_converter.py - Initializing PriceCurrencyConverterToPLN...
+2025-06-04 15:48:52,756 - INFO - file_reader.py - Initializing FileConnector...
+2025-06-04 15:48:52,756 - INFO - currency_converter.py - Converting 100.0 EUR to PLN...
+2025-06-04 15:48:52,756 - DEBUG - file_reader.py - Loading data and rate on currency EUR
+2025-06-04 15:48:52,758 - DEBUG - file_reader.py - Date: 2023-09-01, rate: 4.15
+2025-06-04 15:48:52,758 - DEBUG - currency_converter.py - Initialized ConvertedPricePLN as: 100.0 EUR = 415.0 PLN | rate: 4.15 | date: 2023-09-01
+2025-06-04 15:48:52,759 - INFO - __main__.py - Converted price: 100.0 EUR = 415.0 PLN | rate: 4.15 | date: 2023-09-01
+2025-06-04 15:48:52,759 - INFO - __main__.py - Updating database...
+2025-06-04 15:48:52,759 - DEBUG - database_updater.py - Initializing DatabaseUpdater...
+2025-06-04 15:48:52,783 - INFO - __main__.py - Database updated successfully
+2025-06-04 15:49:05,178 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:49:05,189 - ERROR - __main__.py - argument --price: Amount must be a number like 12.34
+Traceback (most recent call last):
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\utils\args_parser.py", line 21, in price
+    value = float(s)
+ValueError: could not convert string to float: '1w00'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 2541, in _get_value
+    result = type_func(arg_string)
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\utils\args_parser.py", line 24, in price
+    raise argparse.ArgumentTypeError("Amount must be a number like 12.34")
+argparse.ArgumentTypeError: Amount must be a number like 12.34
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\utils\args_parser.py", line 41, in get_args
+    args = self.parse_args()
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 1889, in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 1899, in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 1932, in _parse_known_args2
+    namespace, args = self._parse_known_args(args, namespace, intermixed)
+                      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 2179, in _parse_known_args
+    start_index = consume_optional(start_index)
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 2103, in consume_optional
+    take_action(action, args, option_string)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 1989, in take_action
+    argument_values = self._get_values(action, argument_strings)
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 2508, in _get_values
+    value = self._get_value(action, arg_string)
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.1008.0_x64__qbz5n2kfra8p0\Lib\argparse.py", line 2546, in _get_value
+    raise ArgumentError(action, msg)
+argparse.ArgumentError: argument --price: Amount must be a number like 12.34
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\__main__.py", line 23, in <module>
+    currency, price, mode, source = parser.get_args()
+                                    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\utils\args_parser.py", line 65, in get_args
+    raise ParsingError(e)
+task.utils.args_parser.ParsingError: argument --price: Amount must be a number like 12.34
+2025-06-04 15:49:13,463 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:49:13,475 - DEBUG - args_parser.py - Given currency is CZK
+2025-06-04 15:49:13,475 - DEBUG - args_parser.py - Given price is 1.3453625245235236e+45
+2025-06-04 15:49:13,475 - DEBUG - args_parser.py - Running in prod mode
+2025-06-04 15:49:13,475 - DEBUG - args_parser.py - Data source is db
+2025-06-04 15:49:13,475 - INFO - __main__.py - Starting conversion: 1.3453625245235236e+45 CZK from Source.DATABASE
+2025-06-04 15:49:14,238 - INFO - currency_converter.py - Initializing PriceCurrencyConverterToPLN...
+2025-06-04 15:49:14,238 - INFO - file_reader.py - Initializing FileConnector...
+2025-06-04 15:49:14,238 - INFO - currency_converter.py - Converting 1.3453625245235236e+45 CZK to PLN...
+2025-06-04 15:49:14,238 - DEBUG - file_reader.py - Loading data and rate on currency CZK
+2025-06-04 15:49:14,240 - DEBUG - file_reader.py - Date: 2023-09-01, rate: 0.19
+2025-06-04 15:49:14,240 - DEBUG - currency_converter.py - Initialized ConvertedPricePLN as: 1.3453625245235236e+45 CZK = 2.5561887965946947e+44 PLN | rate: 0.19 | date: 2023-09-01
+2025-06-04 15:49:14,241 - INFO - __main__.py - Converted price: 1.3453625245235236e+45 CZK = 2.5561887965946947e+44 PLN | rate: 0.19 | date: 2023-09-01
+2025-06-04 15:49:14,241 - INFO - __main__.py - Updating database...
+2025-06-04 15:49:14,241 - DEBUG - database_updater.py - Initializing DatabaseUpdater...
+2025-06-04 15:49:14,265 - INFO - __main__.py - Database updated successfully
+2025-06-04 15:49:34,235 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:49:34,246 - DEBUG - args_parser.py - Given currency is CZK
+2025-06-04 15:49:34,246 - DEBUG - args_parser.py - Given price is -1.3453625234234235e+18
+2025-06-04 15:49:34,246 - DEBUG - args_parser.py - Running in dev mode
+2025-06-04 15:49:34,246 - DEBUG - args_parser.py - Data source is api
+2025-06-04 15:49:34,246 - INFO - __main__.py - Starting conversion: -1.3453625234234235e+18 CZK from Source.API
+2025-06-04 15:49:34,988 - INFO - currency_converter.py - Initializing PriceCurrencyConverterToPLN...
+2025-06-04 15:49:34,988 - INFO - currency_converter.py - Converting -1.3453625234234235e+18 CZK to PLN...
+2025-06-04 15:49:34,988 - DEBUG - api_connector.py - Initializing remote request...
+2025-06-04 15:49:34,991 - DEBUG - connectionpool.py - Starting new HTTPS connection (1): api.nbp.pl:443
+2025-06-04 15:49:35,059 - DEBUG - connectionpool.py - https://api.nbp.pl:443 "GET /api/exchangerates/rates/a/CZK/?format=json HTTP/1.1" 200 None
+2025-06-04 15:49:35,060 - DEBUG - api_connector.py - Request completed successfully with code 200
+2025-06-04 15:49:35,060 - DEBUG - api_connector.py - Received response of {'table': 'A', 'currency': 'korona czeska', 'code': 'CZK', 'rates': [{'no': '107/A/NBP/2025', 'effectiveDate': '2025-06-04', 'mid': 0.1722}]}
+2025-06-04 15:49:35,062 - DEBUG - currency_converter.py - Initialized ConvertedPricePLN as: -1.3453625234234235e+18 CZK = -2.316714265335135e+17 PLN | rate: 0.1722 | date: 2025-06-04
+2025-06-04 15:49:35,062 - INFO - __main__.py - Converted price: -1.3453625234234235e+18 CZK = -2.316714265335135e+17 PLN | rate: 0.1722 | date: 2025-06-04
+2025-06-04 15:49:35,062 - INFO - __main__.py - Updating database...
+2025-06-04 15:49:35,062 - DEBUG - database_updater.py - Initializing DatabaseUpdater...
+2025-06-04 15:49:35,062 - DEBUG - json.py - Initializing JsonDatabaseConnector...
+2025-06-04 15:49:35,072 - DEBUG - json.py - Saving data to database.json...
+2025-06-04 15:49:35,074 - INFO - __main__.py - Database updated successfully
+2025-06-04 15:49:45,575 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:49:45,587 - DEBUG - args_parser.py - Given currency is JPY
+2025-06-04 15:49:45,587 - DEBUG - args_parser.py - Given price is -134500.0
+2025-06-04 15:49:45,587 - DEBUG - args_parser.py - Running in dev mode
+2025-06-04 15:49:45,587 - DEBUG - args_parser.py - Data source is api
+2025-06-04 15:49:45,587 - INFO - __main__.py - Starting conversion: -134500.0 JPY from Source.API
+2025-06-04 15:49:46,331 - INFO - currency_converter.py - Initializing PriceCurrencyConverterToPLN...
+2025-06-04 15:49:46,331 - INFO - currency_converter.py - Converting -134500.0 JPY to PLN...
+2025-06-04 15:49:46,331 - DEBUG - api_connector.py - Initializing remote request...
+2025-06-04 15:49:46,333 - DEBUG - connectionpool.py - Starting new HTTPS connection (1): api.nbp.pl:443
+2025-06-04 15:49:46,386 - DEBUG - connectionpool.py - https://api.nbp.pl:443 "GET /api/exchangerates/rates/a/JPY/?format=json HTTP/1.1" 200 None
+2025-06-04 15:49:46,388 - DEBUG - api_connector.py - Request completed successfully with code 200
+2025-06-04 15:49:46,389 - DEBUG - api_connector.py - Received response of {'table': 'A', 'currency': 'jen (Japonia)', 'code': 'JPY', 'rates': [{'no': '107/A/NBP/2025', 'effectiveDate': '2025-06-04', 'mid': 0.026079}]}
+2025-06-04 15:49:46,397 - DEBUG - currency_converter.py - Initialized ConvertedPricePLN as: -134500.0 JPY = -3507.63 PLN | rate: 0.026079 | date: 2025-06-04
+2025-06-04 15:49:46,398 - INFO - __main__.py - Converted price: -134500.0 JPY = -3507.63 PLN | rate: 0.026079 | date: 2025-06-04
+2025-06-04 15:49:46,398 - INFO - __main__.py - Updating database...
+2025-06-04 15:49:46,398 - DEBUG - database_updater.py - Initializing DatabaseUpdater...
+2025-06-04 15:49:46,398 - DEBUG - json.py - Initializing JsonDatabaseConnector...
+2025-06-04 15:49:46,398 - DEBUG - json.py - Saving data to database.json...
+2025-06-04 15:49:46,401 - INFO - __main__.py - Database updated successfully
+2025-06-04 15:49:51,513 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:49:51,525 - DEBUG - args_parser.py - Given currency is CHF
+2025-06-04 15:49:51,525 - DEBUG - args_parser.py - Given price is -134500.0
+2025-06-04 15:49:51,525 - DEBUG - args_parser.py - Running in dev mode
+2025-06-04 15:49:51,525 - DEBUG - args_parser.py - Data source is api
+2025-06-04 15:49:51,525 - INFO - __main__.py - Starting conversion: -134500.0 CHF from Source.API
+2025-06-04 15:49:52,280 - INFO - currency_converter.py - Initializing PriceCurrencyConverterToPLN...
+2025-06-04 15:49:52,280 - INFO - currency_converter.py - Converting -134500.0 CHF to PLN...
+2025-06-04 15:49:52,280 - DEBUG - api_connector.py - Initializing remote request...
+2025-06-04 15:49:52,282 - DEBUG - connectionpool.py - Starting new HTTPS connection (1): api.nbp.pl:443
+2025-06-04 15:49:52,336 - DEBUG - connectionpool.py - https://api.nbp.pl:443 "GET /api/exchangerates/rates/a/CHF/?format=json HTTP/1.1" 200 None
+2025-06-04 15:49:52,336 - DEBUG - api_connector.py - Request completed successfully with code 200
+2025-06-04 15:49:52,336 - DEBUG - api_connector.py - Received response of {'table': 'A', 'currency': 'frank szwajcarski', 'code': 'CHF', 'rates': [{'no': '107/A/NBP/2025', 'effectiveDate': '2025-06-04', 'mid': 4.564}]}
+2025-06-04 15:49:52,339 - DEBUG - currency_converter.py - Initialized ConvertedPricePLN as: -134500.0 CHF = -613858.0 PLN | rate: 4.564 | date: 2025-06-04
+2025-06-04 15:49:52,340 - INFO - __main__.py - Converted price: -134500.0 CHF = -613858.0 PLN | rate: 4.564 | date: 2025-06-04
+2025-06-04 15:49:52,340 - INFO - __main__.py - Updating database...
+2025-06-04 15:49:52,340 - DEBUG - database_updater.py - Initializing DatabaseUpdater...
+2025-06-04 15:49:52,340 - DEBUG - json.py - Initializing JsonDatabaseConnector...
+2025-06-04 15:49:52,341 - DEBUG - json.py - Saving data to database.json...
+2025-06-04 15:49:52,343 - INFO - __main__.py - Database updated successfully
+2025-06-04 15:49:57,459 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:49:57,470 - DEBUG - args_parser.py - Given currency is QQQ
+2025-06-04 15:49:57,470 - DEBUG - args_parser.py - Given price is -134500.0
+2025-06-04 15:49:57,471 - DEBUG - args_parser.py - Running in dev mode
+2025-06-04 15:49:57,471 - DEBUG - args_parser.py - Data source is api
+2025-06-04 15:49:57,471 - INFO - __main__.py - Starting conversion: -134500.0 QQQ from Source.API
+2025-06-04 15:49:58,213 - INFO - currency_converter.py - Initializing PriceCurrencyConverterToPLN...
+2025-06-04 15:49:58,213 - INFO - currency_converter.py - Converting -134500.0 QQQ to PLN...
+2025-06-04 15:49:58,213 - DEBUG - api_connector.py - Initializing remote request...
+2025-06-04 15:49:58,215 - DEBUG - connectionpool.py - Starting new HTTPS connection (1): api.nbp.pl:443
+2025-06-04 15:49:58,268 - DEBUG - connectionpool.py - https://api.nbp.pl:443 "GET /api/exchangerates/rates/a/QQQ/?format=json HTTP/1.1" 404 38
+2025-06-04 15:49:58,269 - ERROR - api_connector.py - 404 Currency QQQ not found
+2025-06-04 15:49:58,269 - ERROR - api_connector.py - Unexpected error while connecting to api: 404 Currency QQQ not found
+2025-06-04 15:49:58,269 - ERROR - __main__.py - Failed to convert -134500.0 QQQ to PLN: 404 Currency QQQ not found
+Traceback (most recent call last):
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\currency_converter.py", line 42, in convert_to_pln
+    result_date, rate = self._source_connector.get_date_and_rate(currency=currency)
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\connectors\source\remote\api_connector.py", line 19, in get_date_and_rate
+    raise ValueError(f"{status_code} Currency {currency} not found")
+ValueError: 404 Currency QQQ not found
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\__main__.py", line 27, in <module>
+    converted_price = converter.convert_to_pln(currency=currency, price=price)
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\currency_converter.py", line 49, in convert_to_pln
+    raise ConversionError(f"Failed to convert {price} {currency} to PLN: {e}")
+task.currency_converter.ConversionError: Failed to convert -134500.0 QQQ to PLN: 404 Currency QQQ not found
+2025-06-04 15:50:09,440 - INFO - __main__.py - Parsing arguments...
+2025-06-04 15:50:09,451 - DEBUG - args_parser.py - Given currency is QQQ
+2025-06-04 15:50:09,451 - DEBUG - args_parser.py - Given price is -134500.0
+2025-06-04 15:50:09,451 - DEBUG - args_parser.py - Running in prod mode
+2025-06-04 15:50:09,451 - DEBUG - args_parser.py - Data source is db
+2025-06-04 15:50:09,452 - INFO - __main__.py - Starting conversion: -134500.0 QQQ from Source.DATABASE
+2025-06-04 15:50:10,199 - INFO - currency_converter.py - Initializing PriceCurrencyConverterToPLN...
+2025-06-04 15:50:10,199 - INFO - file_reader.py - Initializing FileConnector...
+2025-06-04 15:50:10,200 - INFO - currency_converter.py - Converting -134500.0 QQQ to PLN...
+2025-06-04 15:50:10,200 - DEBUG - file_reader.py - Loading data and rate on currency QQQ
+2025-06-04 15:50:10,200 - ERROR - file_reader.py - Couldn't convert currency from file 'C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\example_currency_rates.json': Currency QQQ not present in the example_currency_rates.json file
+2025-06-04 15:50:10,200 - ERROR - __main__.py - Failed to convert -134500.0 QQQ to PLN: Currency QQQ not present in the example_currency_rates.json file
+Traceback (most recent call last):
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\currency_converter.py", line 42, in convert_to_pln
+    result_date, rate = self._source_connector.get_date_and_rate(currency=currency)
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\connectors\source\local\file_reader.py", line 49, in get_date_and_rate
+    raise InvalidCurrencyDataError(f"Currency {currency} not present in the {self._filename} file")
+task.connectors.source.local.file_reader.InvalidCurrencyDataError: Currency QQQ not present in the example_currency_rates.json file
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\__main__.py", line 27, in <module>
+    converted_price = converter.convert_to_pln(currency=currency, price=price)
+  File "C:\Users\mw-ko\Documents\GitHub\edaxo-recruitment-task\task\currency_converter.py", line 49, in convert_to_pln
+    raise ConversionError(f"Failed to convert {price} {currency} to PLN: {e}")
+task.currency_converter.ConversionError: Failed to convert -134500.0 QQQ to PLN: Currency QQQ not present in the example_currency_rates.json file
+2025-06-04 16:05:05,447 - DEBUG - proactor_events.py - Using proactor: IocpProactor

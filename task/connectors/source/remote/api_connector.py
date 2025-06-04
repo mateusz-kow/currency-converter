@@ -32,8 +32,9 @@ class ApiConnector(SourceConnector):
 
             return formatted_date, rate
 
-        except RequestsConnectionError:
+        except RequestsConnectionError as e:
             logger.error("Network error while connecting to NBP API")
-            raise ConnectionError("No internet connection")
-        except Exception:
+            raise ConnectionError("No internet connection") from e
+        except Exception as e:
+            logger.error(f"Unexpected error while connecting to api: {e}")
             raise

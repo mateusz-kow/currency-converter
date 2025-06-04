@@ -4,13 +4,12 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from task.connectors.database.database_connector import DatabaseConnector
 from task.currency_converter import ConvertedPricePLN
 from task.utils.config import SQL_DATABASE_NAME
+
 import logging
 
 logger = logging.getLogger(__name__)
 
 Base = declarative_base()
-engine = create_engine(f"sqlite:///{SQL_DATABASE_NAME}")
-Session = sessionmaker(bind=engine)
 
 
 class Exchange(Base):
@@ -25,10 +24,12 @@ class Exchange(Base):
 
 class SQLDatabaseConnector(DatabaseConnector):
 
-    def __init__(self, db_path: str):
-        super().__init__(db_path)
-        Base.metadata.create_all(engine)
-        self.session = Session()
+    def __init__(self, db_path: str = SQL_DATABASE_NAME):
+        super().__init__(db_path, ".db")
+        self.engine = create_engine(f"sqlite:///{db_path}")
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
 
     def save(self, entity: ConvertedPricePLN) -> int:
         exchange = Exchange(
@@ -43,29 +44,30 @@ class SQLDatabaseConnector(DatabaseConnector):
 
     def get_all(self) -> list[ConvertedPricePLN]:
         exchanges = self.session.query(Exchange).all()
-        result = []
-        for ex in exchanges:
-            price_in_source_currency = ex.price_in_pln / ex.rate if ex.rate != 0 else 0
-            result.append(ConvertedPricePLN(
+        return [
+            ConvertedPricePLN(
                 currency=ex.currency,
                 currency_rate=ex.rate,
                 currency_rate_fetch_date=ex.date,
                 price_in_pln=ex.price_in_pln,
-                price_in_source_currency=price_in_source_currency
-            ))
-        return result
+                price_in_source_currency=(ex.price_in_pln / ex.rate if ex.rate else 0)
+            )
+            for ex in exchanges
+        ]
 
     def get_by_id(self, item_id: int) -> ConvertedPricePLN:
         ex = self.session.query(Exchange).filter_by(id=item_id).first()
-        if ex is None:
+        if not ex:
             logger.error(f"No record with id {item_id} found")
             raise KeyError(f"Item with id {item_id} not found.")
-
-        price_in_source_currency = ex.price_in_pln / ex.rate if ex.rate != 0 else 0
         return ConvertedPricePLN(
             currency=ex.currency,
             currency_rate=ex.rate,
             currency_rate_fetch_date=ex.date,
             price_in_pln=ex.price_in_pln,
-            price_in_source_currency=price_in_source_currency
+            price_in_source_currency=(ex.price_in_pln / ex.rate if ex.rate else 0)
         )
+
+    def close(self):
+        self.session.close()
+        self.engine.dispose()
