@@ -16,18 +16,20 @@ A command-line interface (CLI) application for converting prices from various cu
 
 ## Project Structure
 
+The project is organized as follows:
+
 ```
 currency-converter/
-├── task/                   # Main application source code
-│   ├── connectors/         # Modules for connecting to external data sources and databases
-│   ├── utils/              # Helper modules for config, parsing, etc.
-│   ├── currency_converter.py # Core conversion logic
-│   └── __main__.py         # Application entry point
-├── tests/                  # Unit tests for the application
-├── database.json           # Default database for 'dev' mode
-├── example_currency_rates.json # Local source for exchange rates
-├── requirements.txt        # Project dependencies
-└── README.md               # This file
+├── src/                          # Main application source code
+│   ├── connectors/               # Modules for connecting to data sources and databases
+│   ├── utils/                    # Helper modules for config, parsing, etc.
+│   ├── currency_converter.py     # Core conversion logic
+│   └── __main__.py               # Application entry point
+├── tests/                        # Unit tests for the application
+├── database.json                 # Default database for 'dev' mode
+├── example_currency_rates.json   # Local source for exchange rates
+├── requirements.txt              # Project dependencies
+└── README.md                     # This file
 ```
 
 ## Setup and Installation
@@ -60,7 +62,7 @@ currency-converter/
 
 ## Usage
 
-The application is run from the command line using `python -m task`.
+The application is run from the command line using `python -m src`.
 
 ### Command-Line Arguments
 
