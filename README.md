@@ -75,7 +75,7 @@ The application is run from the command line using `python -m src`.
 
 1.  **Convert 100 EUR to PLN using the NBP API and save to the JSON database:**
     ```sh
-    python -m src --currency EUR --price 100 --source api --mode dev
+    python -m task --currency EUR --price 100 --source api --mode dev
     ```
     **Expected Output:**
     ```
@@ -85,7 +85,7 @@ The application is run from the command line using `python -m src`.
 
 2.  **Convert 500 CZK to PLN using the local file rates and save to the SQLite database:**
     ```sh
-    python -m src --currency CZK --price 500 --source db --mode prod
+    python -m task --currency CZK --price 500 --source db --mode prod
     ```
     **Expected Output:**
     ```
